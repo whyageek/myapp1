@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "821084150126",
+    "project_id": "ciggmmapp",
+    "storage_bucket": "ciggmmapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821084150126:android:ca997825adb14f8398097f",
+        "android_client_info": {
+          "package_name": "com.example.my_app1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaix0SQi6CR-LysxfC9DxaTV3P01zi0tM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
