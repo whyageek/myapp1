@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_app1/models/cigaratte.dart';
-import 'package:my_app1/screens/analysis_page.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore library
+import 'package:my_app1/models/cigaratte.dart'; // Adjust your import as per your project structure
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,6 +11,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Map<String, int> cigaretteCountMap = {};
+
+  // Initialize Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Function to fetch data from Firestore
+  void fetchDataFromFirestore() async {
+    try {
+      // Example: Fetching data from 'cigarettes' collection
+      QuerySnapshot querySnapshot = await _firestore.collection('cigarettes').get();
+
+      // Process each document in the collection
+      querySnapshot.docs.forEach((doc) {
+        // Assuming 'Cigarette' model has 'name' and 'count' fields
+        String name = doc['name'];
+        int count = doc['count'];
+
+        // Update local map with fetched data
+        setState(() {
+          cigaretteCountMap[name] = count;
+        });
+      });
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataFromFirestore(); // Fetch data when the widget initializes
+  }
 
   void _showCigaretteDialog() {
     String? tempSelectedCigarette;
@@ -70,45 +99,24 @@ class _HomePageState extends State<HomePage> {
 
   void _incrementCigaretteCount(String name) {
     setState(() {
-      cigaretteCountMap[name] = cigaretteCountMap[name]! + 1;
+      if (cigaretteCountMap.containsKey(name)) {
+        cigaretteCountMap[name] = cigaretteCountMap[name]! + 1;
+      } else {
+        cigaretteCountMap[name] = 1;
+      }
     });
   }
 
   void _decrementCigaretteCount(String name) {
     setState(() {
-      if (cigaretteCountMap[name]! > 0) {
+      if (cigaretteCountMap.containsKey(name) && cigaretteCountMap[name]! > 0) {
         cigaretteCountMap[name] = cigaretteCountMap[name]! - 1;
       }
     });
   }
 
   void _deleteCigarette(String name) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Confirm Deletion"),
-          content: Text("Are you sure you want to delete the cigarette container for '$name'?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  cigaretteCountMap.remove(name);
-                });
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text("Delete"),
-            ),
-          ],
-        );
-      },
-    );
+    // Implement deletion logic from Firestore
   }
 
   void _navigateToAnalysisPage() {
@@ -220,49 +228,49 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCigaretteContainer(String name, int count) {
-  return Container(
-    margin: EdgeInsets.symmetric(vertical: 8),
-    padding: EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          name,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () => _decrementCigaretteCount(name),
-              icon: Icon(Icons.remove),
-              // Disable the button when count is zero
-              color: count > 0 ? null : Colors.grey,
-            ),
-            Text(
-              count.toString(),
-              style: TextStyle(
-                fontSize: 18,
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => _decrementCigaretteCount(name),
+                icon: Icon(Icons.remove),
+                // Disable the button when count is zero
+                color: count > 0 ? null : Colors.grey,
               ),
-            ),
-            IconButton(
-              onPressed: () => _incrementCigaretteCount(name),
-              icon: Icon(Icons.add),
-            ),
-            IconButton(
-              onPressed: () => _deleteCigarette(name),
-              icon: Icon(Icons.delete),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              IconButton(
+                onPressed: () => _incrementCigaretteCount(name),
+                icon: Icon(Icons.add),
+              ),
+              IconButton(
+                onPressed: () => _deleteCigarette(name),
+                icon: Icon(Icons.delete),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

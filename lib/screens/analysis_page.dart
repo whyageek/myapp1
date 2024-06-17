@@ -57,7 +57,7 @@ class AnalysisPage extends StatelessWidget {
               child: Text("Go Back"),
             ),
           ],
-        ),
+        ),    
       ),
     );
   }
