@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore library
+import 'package:my_app1/main.dart';
 import 'package:my_app1/models/cigaratte.dart'; // Adjust your import as per your project structure
 
 class HomePage extends StatefulWidget {
@@ -12,35 +13,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Map<String, int> cigaretteCountMap = {};
 
-  // Initialize Firestore instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  // Function to fetch data from Firestore
-  void fetchDataFromFirestore() async {
-    try {
-      // Example: Fetching data from 'cigarettes' collection
-      QuerySnapshot querySnapshot = await _firestore.collection('cigarettes').get();
-
-      // Process each document in the collection
-      querySnapshot.docs.forEach((doc) {
-        // Assuming 'Cigarette' model has 'name' and 'count' fields
-        String name = doc['name'];
-        int count = doc['count'];
-
-        // Update local map with fetched data
-        setState(() {
-          cigaretteCountMap[name] = count;
-        });
-      });
-    } catch (e) {
-      print('Error fetching data: $e');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    fetchDataFromFirestore(); // Fetch data when the widget initializes
   }
 
   void _showCigaretteDialog() {
@@ -116,7 +91,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteCigarette(String name) {
-    // Implement deletion logic from Firestore
+    showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Confirm Deletion"),
+        content: Text("Are you sure you want to delete the cigarette container for '$name'?"),
+        actions: [
+          TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  cigaretteCountMap.remove(name);
+                });
+                Navigator.of(context).pop();
+              }, 
+              child: Text("Delete")
+            )
+          ],
+        );
+      }
+    );  
   }
 
   void _navigateToAnalysisPage() {
@@ -139,7 +137,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   int calculateMonthlyCigaretteCount() {
-    // Adjust as per your requirement
+    
     return calculateDailyCigaretteCount() * 30;
   }
 
@@ -162,7 +160,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: _navigateToAnalysisPage,
             icon: Icon(Icons.analytics),
-            color: Colors.black, // Adjust icon color as needed
+            color: Colors.black, 
           ),
         ],
       ),
@@ -250,7 +248,6 @@ class _HomePageState extends State<HomePage> {
               IconButton(
                 onPressed: () => _decrementCigaretteCount(name),
                 icon: Icon(Icons.remove),
-                // Disable the button when count is zero
                 color: count > 0 ? null : Colors.grey,
               ),
               Text(
