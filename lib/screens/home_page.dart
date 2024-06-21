@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore library
 import 'package:my_app1/main.dart';
@@ -16,6 +17,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  void signUserOut () {
+    FirebaseAuth.instance.signOut();
   }
 
   void _showCigaretteDialog() {
@@ -183,7 +188,7 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -218,6 +223,14 @@ class _HomePageState extends State<HomePage> {
                 // Handle navigation to Settings screen
                 Navigator.pop(context); // Close the drawer
               },
+            ),
+
+            const SizedBox(height: 50,),
+
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('SignOut'),
+              onTap: signUserOut,
             ),
           ],
         ),
