@@ -5,11 +5,12 @@ import 'package:my_app1/main.dart';
 import 'package:my_app1/models/cigaratte.dart'; // Adjust your import as per your project structure
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
+
 
 class _HomePageState extends State<HomePage> {
   Map<String, int> cigaretteCountMap = {};
@@ -18,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
   }
+  
+  final user = FirebaseAuth.instance.currentUser!;
 
   void signUserOut () {
     FirebaseAuth.instance.signOut();
@@ -193,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.blue,
               ),
               child: Text(
-                'Navigation',
+                'hej',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -224,8 +227,6 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context); // Close the drawer
               },
             ),
-
-            const SizedBox(height: 50,),
 
             ListTile(
               leading: Icon(Icons.logout),
