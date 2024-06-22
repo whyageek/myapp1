@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:my_app1/models/my_textfield.dart';
 import 'package:my_app1/models/sq_tile.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  final Function()? onTap;
+  LoginPage({super.key, required this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,7 +16,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   //text editing controllers
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
 
   Future<void> signUserIn() async {
@@ -41,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     wrongEmailMessage();
   }
 
-  //Wrong Password
+  //Wrong PASSWORD
   else if (e.code == 'user-not-found') {
     //show error to user
     wrongPasswordMessage();
@@ -52,13 +53,15 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pop(context);
   }
 
+  // message popup
   void wrongEmailMessage() {
     showDialog(context: 
     context, builder: (context) {
       return const AlertDialog(
         title: Text("Incorrect Email bbg"),
-      );
-    },);
+        );
+      },
+    );
   }
 
   void wrongPasswordMessage() {
@@ -66,8 +69,9 @@ class _LoginPageState extends State<LoginPage> {
     context, builder: (context) {
       return const AlertDialog(
         title: Text("Incorrect Password bb"),
-      );
-    },);
+        );
+      },
+    );
   }
 
   @override
@@ -87,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                   size:100
                 ),
         
-                SizedBox(height: 50,),
+                const SizedBox(height: 50,),
         
                 const Text("Wow Phirse Aagaye",
                   style: TextStyle(color: Colors.black, 
@@ -199,14 +203,18 @@ class _LoginPageState extends State<LoginPage> {
         
                 const SizedBox(height:50,),
         
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Don't have an account?"),
                     SizedBox(width: 10,),
-                    Text('Register Now',
-                    style: TextStyle(
-                      color: Colors.blue, fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: widget.onTap,
+                      child: Text('Register Now',
+                      style: TextStyle(
+                        color: Colors.blue, 
+                        fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
