@@ -17,6 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   //text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   Future<void> signUserUp() async {
 
@@ -33,11 +34,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // try creating the user
     try {
-  await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: emailController.text,
-    password: passwordController.text,
-  );
-} on FirebaseAuthException catch (e) {
+       //check if password is confirmed
+       if (passwordController.text == confirmPasswordController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text, 
+          password: passwordController.text
+        );
+       } else {
+        //show error
+        showDialog(context: 
+    context, builder: (context) {
+      return const AlertDialog(
+        title: Text("Password Dont MATCH Bitch"),
+        );
+      },
+    );
+       }
+  } on FirebaseAuthException catch (e) {
   //Wrong EMAIL
   if (e.code == 'user-not-found') {
     //show error to user
@@ -125,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //confirm password Textfield
                 MyTextfield(
-                  controller: passwordController,
+                  controller: confirmPasswordController,
                   hintText: "Confirm Password",
                   obscureText: true,
                 ),
@@ -158,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderRadius: BorderRadius.circular(10)
                       ),
                     child: const Center(child: Text(
-                      "Sign in", 
+                      "Sign Up", 
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
