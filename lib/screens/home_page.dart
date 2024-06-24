@@ -119,22 +119,23 @@ class _HomePageState extends State<HomePage> {
         .collection('cigarettes')
         .doc(name)
         .update({
-      'timestamps': FieldValue.arrayUnion([Timestamp.now()])
+      'timestamps': FieldValue.arrayUnion([Timestamp.fromDate(DateTime.now())])
     });
   }
 
   void _decrementCigaretteCount(String name) async {
     if (cigaretteCountMap.containsKey(name) && cigaretteCountMap[name]! > 0) {
-      setState(() {
-        cigaretteCountMap[name] = cigaretteCountMap[name]! - 1;
-      });
-
-      final userId = user.uid;
       final currentTimestamp = DateTime.now();
       final lastAddedTimestamp = cigaretteTimestamps[name];
 
       if (lastAddedTimestamp != null &&
           currentTimestamp.difference(lastAddedTimestamp).inSeconds <= 20) {
+        setState(() {
+          cigaretteCountMap[name] = cigaretteCountMap[name]! - 1;
+          cigaretteTimestamps.remove(name);
+        });
+
+        final userId = user.uid;
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
@@ -143,7 +144,6 @@ class _HomePageState extends State<HomePage> {
             .update({
           'timestamps': FieldValue.arrayRemove([Timestamp.fromDate(lastAddedTimestamp)])
         });
-        cigaretteTimestamps.remove(name);
       }
     }
   }
@@ -316,11 +316,18 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildCigaretteContainer(String name, int count) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6.0,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
