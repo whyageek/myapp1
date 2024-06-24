@@ -1,66 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class AnalysisPage extends StatelessWidget {
-  final int dailyCigaretteCount;
-  final int monthlyCigaretteCount;
-
-  AnalysisPage({required this.dailyCigaretteCount, required this.monthlyCigaretteCount});
-
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final int dailyCigaretteCount = arguments['dailyCigaretteCount'];
+    final int monthlyCigaretteCount = arguments['monthlyCigaretteCount'];
+    final double dailyCigarettePrice = arguments['dailyCigarettePrice'];
+    final double monthlyCigarettePrice = arguments['monthlyCigarettePrice'];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cigarette Smoking Analysis"),
+        title: Text('Analysis'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Daily Cigarette Count: $dailyCigaretteCount"),
-            Text("Monthly Cigarette Count: $monthlyCigaretteCount"),
-            SizedBox(height: 20),
-            PieChart(
-              PieChartData(
-                sections: [
-                  PieChartSectionData(
-                    value: dailyCigaretteCount.toDouble(),
-                    title: "Daily",
-                    color: Colors.blue,
-                    titleStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  PieChartSectionData(
-                    value: monthlyCigaretteCount.toDouble(),
-                    title: "Monthly",
-                    color: Colors.green,
-                    titleStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-                sectionsSpace: 0,
-                centerSpaceRadius: 40,
-                borderData: FlBorderData(show: false),
-              ),
+            Text(
+              'Daily Consumption: $dailyCigaretteCount cigarettes',
+              style: TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Navigate back to previous page
-              },
-              child: Text("Go Back"),
+            Text(
+              'Monthly Consumption: $monthlyCigaretteCount cigarettes',
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'Daily Expenditure: \$${dailyCigarettePrice.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'Monthly Expenditure: \$${monthlyCigarettePrice.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 18),
             ),
           ],
-        ),    
+        ),
       ),
     );
   }
-  
 }
-

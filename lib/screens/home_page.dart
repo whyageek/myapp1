@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore library
-import 'package:my_app1/main.dart';
-import 'package:my_app1/models/cigaratte.dart'; // Adjust your import as per your project structure
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_app1/models/cigaratte.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -11,19 +10,41 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<HomePage> {
   Map<String, int> cigaretteCountMap = {};
+  Map<String, DateTime> cigaretteTimestamps = {};
 
   @override
   void initState() {
     super.initState();
+    _loadCigaretteData();
   }
-  
+
   final user = FirebaseAuth.instance.currentUser!;
 
-  void signUserOut () {
+  void signUserOut() {
     FirebaseAuth.instance.signOut();
+  }
+
+  void _loadCigaretteData() async {
+    final userId = user.uid;
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('cigarettes')
+        .get();
+
+    Map<String, int> countMap = {};
+
+    for (var doc in querySnapshot.docs) {
+      var data = doc.data();
+      var timestamps = List<Timestamp>.from(data['timestamps']);
+      countMap[doc.id] = timestamps.length;
+    }
+
+    setState(() {
+      cigaretteCountMap = countMap;
+    });
   }
 
   void _showCigaretteDialog() {
@@ -68,6 +89,7 @@ class _HomePageState extends State<HomePage> {
                     if (!cigaretteCountMap.containsKey(tempSelectedCigarette!)) {
                       cigaretteCountMap[tempSelectedCigarette!] = 0;
                     }
+                    _incrementCigaretteCount(tempSelectedCigarette!);
                   });
                 }
                 Navigator.of(context).pop();
@@ -80,58 +102,102 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _incrementCigaretteCount(String name) {
+  void _incrementCigaretteCount(String name) async {
     setState(() {
       if (cigaretteCountMap.containsKey(name)) {
         cigaretteCountMap[name] = cigaretteCountMap[name]! + 1;
       } else {
         cigaretteCountMap[name] = 1;
       }
+      cigaretteTimestamps[name] = DateTime.now();
+    });
+
+    final userId = user.uid;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('cigarettes')
+        .doc(name)
+        .update({
+      'timestamps': FieldValue.arrayUnion([Timestamp.now()])
     });
   }
 
-  void _decrementCigaretteCount(String name) {
-    setState(() {
-      if (cigaretteCountMap.containsKey(name) && cigaretteCountMap[name]! > 0) {
+  void _decrementCigaretteCount(String name) async {
+    if (cigaretteCountMap.containsKey(name) && cigaretteCountMap[name]! > 0) {
+      setState(() {
         cigaretteCountMap[name] = cigaretteCountMap[name]! - 1;
+      });
+
+      final userId = user.uid;
+      final currentTimestamp = DateTime.now();
+      final lastAddedTimestamp = cigaretteTimestamps[name];
+
+      if (lastAddedTimestamp != null &&
+          currentTimestamp.difference(lastAddedTimestamp).inSeconds <= 20) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('cigarettes')
+            .doc(name)
+            .update({
+          'timestamps': FieldValue.arrayRemove([Timestamp.fromDate(lastAddedTimestamp)])
+        });
+        cigaretteTimestamps.remove(name);
       }
-    });
+    }
   }
 
   void _deleteCigarette(String name) {
-    showDialog(context: context, builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Confirm Deletion"),
-        content: Text("Are you sure you want to delete the cigarette container for '$name'?"),
-        actions: [
-          TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
-            },
-            child: Text("Cancel"),
-            ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Deletion"),
+          content: Text("Are you sure you want to delete the cigarette container for '$name'?"),
+          actions: [
             TextButton(
               onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
                 setState(() {
                   cigaretteCountMap.remove(name);
                 });
+
+                final userId = user.uid;
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(userId)
+                    .collection('cigarettes')
+                    .doc(name)
+                    .delete();
+
                 Navigator.of(context).pop();
-              }, 
-              child: Text("Delete")
-            )
+              },
+              child: Text("Delete"),
+            ),
           ],
         );
-      }
-    );  
+      },
+    );
   }
 
   void _navigateToAnalysisPage() {
+    double dailyCigarettePrice = calculateDailyCigarettePrice();
+    double monthlyCigarettePrice = calculateMonthlyCigarettePrice();
+
     Navigator.pushNamed(
       context,
       '/analysis',
       arguments: {
         'dailyCigaretteCount': calculateDailyCigaretteCount(),
         'monthlyCigaretteCount': calculateMonthlyCigaretteCount(),
+        'dailyCigarettePrice': dailyCigarettePrice,
+        'monthlyCigarettePrice': monthlyCigarettePrice,
       },
     );
   }
@@ -145,8 +211,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   int calculateMonthlyCigaretteCount() {
-    
     return calculateDailyCigaretteCount() * 30;
+  }
+
+  double calculateDailyCigarettePrice() {
+    double total = 0.0;
+    cigaretteCountMap.forEach((name, count) {
+      double price = cigarettes.firstWhere((c) => c.name == name).price;
+      total += price * count;
+    });
+    return total;
+  }
+
+  double calculateMonthlyCigarettePrice() {
+    return calculateDailyCigarettePrice() * 30;
   }
 
   @override
@@ -168,7 +246,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: _navigateToAnalysisPage,
             icon: Icon(Icons.analytics),
-            color: Colors.black, 
+            color: Colors.black,
           ),
         ],
       ),
@@ -207,7 +285,6 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.person),
               title: Text('Profile'),
               onTap: () {
-                // Handle navigation to Profile screen
                 Navigator.pop(context); // Close the drawer
               },
             ),
@@ -215,19 +292,17 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.calendar_today),
               title: Text('Calendar'),
               onTap: () {
-                // Handle navigation to Calendar screen
                 Navigator.pop(context); // Close the drawer
+                Navigator.pushNamed(context, '/calendar');
               },
             ),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Settings'),
               onTap: () {
-                // Handle navigation to Settings screen
                 Navigator.pop(context); // Close the drawer
               },
             ),
-
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('SignOut'),
@@ -252,23 +327,17 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text(
             name,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18),
           ),
           Row(
             children: [
               IconButton(
                 onPressed: () => _decrementCigaretteCount(name),
                 icon: Icon(Icons.remove),
-                color: count > 0 ? null : Colors.grey,
               ),
               Text(
                 count.toString(),
-                style: TextStyle(
-                  fontSize: 18,
-                ),
+                style: TextStyle(fontSize: 18),
               ),
               IconButton(
                 onPressed: () => _incrementCigaretteCount(name),

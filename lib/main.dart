@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:my_app1/firebase_options.dart';
 import 'package:my_app1/screens/Login_page.dart';
+import 'package:my_app1/screens/analysis_page.dart';
 import 'package:my_app1/screens/auth_page.dart';
+import 'package:my_app1/screens/calendar_page.dart';
 import 'package:my_app1/screens/home_page.dart';
 
 void main() async {
@@ -26,6 +28,11 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         primarySwatch: Colors.blue,
       ),
+       routes: {
+      '/analysis': (context) => AnalysisPage(),
+      '/calendar': (context) => CalendarPage(),
+      // other routes...
+    },
     );
   }
 }
