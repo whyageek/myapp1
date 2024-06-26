@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class AnalysisPage extends StatelessWidget {
@@ -35,8 +36,17 @@ class AnalysisPage extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
           ],
+          LineChart(
+           LineChartData(
+             // read about it in the LineChartData section
+           ),
+           swapAnimationDuration: Duration(milliseconds: 150), // Optional
+           swapAnimationCurve: Curves.linear, // Optional
+         ),
+       ]
         ),
       ),
+       
     );
   }
 }
