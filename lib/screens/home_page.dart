@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                 if (tempSelectedCigarette != null) {
                   setState(() {
                     if (!cigaretteCountMap.containsKey(tempSelectedCigarette!)) {
-                      cigaretteCountMap[tempSelectedCigarette!] = 0;
+                      cigaretteCountMap[tempSelectedCigarette!] = -1;
                     }
                     _incrementCigaretteCount(tempSelectedCigarette!);
                   });
@@ -103,24 +103,23 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _incrementCigaretteCount(String name) async {
-    setState(() {
-      if (cigaretteCountMap.containsKey(name)) {
-        cigaretteCountMap[name] = cigaretteCountMap[name]! + 1;
-      } else {
-        cigaretteCountMap[name] = 1;
+   setState(() {
+     if (!cigaretteCountMap.containsKey(name)) {
+        cigaretteCountMap[name] = 0;
       }
-      cigaretteTimestamps[name] = DateTime.now();
+      cigaretteCountMap[name] = cigaretteCountMap[name]! + 1;
+     cigaretteTimestamps[name] = DateTime.now();
     });
 
-    final userId = user.uid;
+   final userId = user.uid;
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .collection('cigarettes')
-        .doc(name)
-        .update({
-      'timestamps': FieldValue.arrayUnion([Timestamp.fromDate(DateTime.now())])
-    });
+       .collection('cigarettes')
+       .doc(name)
+       .set({
+     'timestamps': FieldValue.arrayUnion([Timestamp.fromDate(DateTime.now())])
+    }, SetOptions(merge: true));
   }
 
   void _decrementCigaretteCount(String name) async {
@@ -129,7 +128,7 @@ class _HomePageState extends State<HomePage> {
       final lastAddedTimestamp = cigaretteTimestamps[name];
 
       if (lastAddedTimestamp != null &&
-          currentTimestamp.difference(lastAddedTimestamp).inSeconds <= 20) {
+          currentTimestamp.difference(lastAddedTimestamp).inSeconds <= 30) {
         setState(() {
           cigaretteCountMap[name] = cigaretteCountMap[name]! - 1;
           cigaretteTimestamps.remove(name);
@@ -149,39 +148,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _deleteCigarette(String name) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Confirm Deletion"),
-          content: Text("Are you sure you want to delete the cigarette container for '$name'?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  cigaretteCountMap.remove(name);
-                });
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Confirm Deletion"),
+        content: Text("Are you sure you want to delete the cigarette container for '$name'?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
 
-                final userId = user.uid;
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(userId)
-                    .collection('cigarettes')
-                    .doc(name)
-                    .delete();
+              setState(() {
+                cigaretteCountMap.remove(name);
+              });
 
-                Navigator.of(context).pop();
-              },
-              child: Text("Delete"),
+              final userId = user.uid;
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userId)
+                  .collection('cigarettes')
+                  .doc(name)
+                  .delete();
+             },
+             child: Text("Delete"),
             ),
-          ],
-        );
+         ],
+       );
       },
     );
   }
@@ -224,7 +223,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   double calculateMonthlyCigarettePrice() {
-    return calculateDailyCigarettePrice() * 30;
+    return calculateDailyCigarettePrice() * 1;
   }
 
   @override
