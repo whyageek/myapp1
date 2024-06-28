@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.2'  // Ensure this is also up to date
+        classpath 'com.android.tools.build:gradle:7.0.2' // Update this line
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -16,4 +16,17 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    // Additional configurations
+    rootProject.buildDir = "../build"
+    subprojects {
+        project.buildDir = "${rootProject.buildDir}/${project.name}"
+    }
+    subprojects {
+        project.evaluationDependsOn(":app")
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
 }
