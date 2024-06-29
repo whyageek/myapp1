@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string msgid="8397015543330865059" name="android.credentials.TYPE_PASSWORD_CREDENTIAL">"Senha"</string>
+    <string msgid="3929015085059320822" name="androidx.credentials.TYPE_PUBLIC_KEY_CREDENTIAL">"Chave de acesso"</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Link copiado para a área de transferência"</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Copiar link"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Abrir no navegador"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Compartilhar link"</string>
+    <string msgid="2863935784364843033" name="glance_error_layout_text">"Pesquise "<b><tt>"GlanceAppWidget"</tt></b>" no "<b><tt>"adb logcat"</tt></b>" para consultar o erro exato"</string>
+    <string msgid="3631961919234443531" name="glance_error_layout_title"><b>"Erro no widget do app Glance"</b></string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+</resources>

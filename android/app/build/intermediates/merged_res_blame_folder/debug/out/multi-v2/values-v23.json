@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.my_app1.app-mergeDebugResources-43:/values-v23/values-v23.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\aryan\\.gradle\\caches\\transforms-3\\93a67af561d9983b89a67db4d906646f\\transformed\\work-runtime-2.7.1\\res\\values-v23\\values-v23.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,121",
+                        "endColumns": "65,62",
+                        "endOffsets": "116,179"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\aryan\\.gradle\\caches\\transforms-3\\6172871581779559fec113ff4705ba49\\transformed\\jetified-glance-appwidget-1.0.0\\res\\values-v23\\values-v23.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    },
+                    "to": {
+                        "startLines": "4",
+                        "startColumns": "4",
+                        "startOffsets": "184",
+                        "endColumns": "55",
+                        "endOffsets": "235"
+                    }
+                }
+            ]
+        }
+    ]
+}

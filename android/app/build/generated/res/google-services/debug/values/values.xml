@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">821084150126</string>
+    <string name="google_api_key" translatable="false">AIzaSyDaix0SQi6CR-LysxfC9DxaTV3P01zi0tM</string>
+    <string name="google_app_id" translatable="false">1:821084150126:android:ca997825adb14f8398097f</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDaix0SQi6CR-LysxfC9DxaTV3P01zi0tM</string>
+    <string name="google_storage_bucket" translatable="false">ciggmmapp.appspot.com</string>
+    <string name="project_id" translatable="false">ciggmmapp</string>
+</resources>

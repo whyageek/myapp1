@@ -1,0 +1,70 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.my_app1.app-mergeDebugResources-43:/values-en-rXC/values-en-rXC.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\aryan\\.gradle\\caches\\transforms-3\\ac064d203740a6c1a61fed9b2b917119\\transformed\\browser-1.4.0\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,255,454,665",
+                        "endColumns": "199,198,210,201",
+                        "endOffsets": "250,449,660,862"
+                    },
+                    "to": {
+                        "startLines": "4,5,6,7",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "486,686,885,1096",
+                        "endColumns": "199,198,210,201",
+                        "endOffsets": "681,880,1091,1293"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\aryan\\.gradle\\caches\\transforms-3\\c4cfaaab023dad82a28ed3ebca738598\\transformed\\jetified-credentials-1.2.0-rc01\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,270",
+                        "endColumns": "214,215",
+                        "endOffsets": "265,481"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\aryan\\.gradle\\caches\\transforms-3\\675055b4b6de5eef5de81df814f24bfa\\transformed\\core-1.8.0\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "203",
+                        "endOffsets": "254"
+                    },
+                    "to": {
+                        "startLines": "10",
+                        "startColumns": "4",
+                        "startOffsets": "1972",
+                        "endColumns": "203",
+                        "endOffsets": "2171"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\aryan\\.gradle\\caches\\transforms-3\\6172871581779559fec113ff4705ba49\\transformed\\jetified-glance-appwidget-1.0.0\\res\\values-en-rXC\\values-en-rXC.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,478",
+                        "endColumns": "422,250",
+                        "endOffsets": "473,724"
+                    },
+                    "to": {
+                        "startLines": "8,9",
+                        "startColumns": "4,4",
+                        "startOffsets": "1298,1721",
+                        "endColumns": "422,250",
+                        "endOffsets": "1716,1967"
+                    }
+                }
+            ]
+        }
+    ]
+}
